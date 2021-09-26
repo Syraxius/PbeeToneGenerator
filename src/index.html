@@ -1,18 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title>Pbee's Tone Generator</title>
+        <title>Pbee Tone Generator</title>
         <link rel="stylesheet" href="./index.css">
         <script src="./index.js"></script>
     </head>
     <body>
-    <div align="center">
-        <h1 style="margin: 16px;">Pbee's Tone Generator</h1>
-        <div style="margin: 16px;">
-            <input type="button" onclick="startAll();" value="Start" />
-            <input type="button" onclick="stopAll();" value="Stop" />
+        <h1 style="margin: 16px; text-align: center;">Pbee Tone Generator</h1>
+        <h2 id="instructions-heading" style="margin: 16px; text-align: center;">Instructions</h2>
+        <div style="margin: auto; width: 640px;">
+            <ol>
+               <li>Click on <strong>Initialize</strong> to start.</li>
+                <li>Adjust the frequency slider of the <strong>Searcher</strong> until a pattern emerges on the screen.</li>
+               <li>Click on <strong>Add</strong> to save the frequency.</li>
+                <li>Adjust the volume sliders of each <strong>Saved Frequency</strong> and have fun!</li>
+            </ol>
         </div>
-        <div style="margin: 16px;" id="volumesliders"></div>
-    </div>
+        <div style="margin: 16px; text-align: center">
+            <input id="init-button" type="button" onclick="init();" value="Initialize" />
+        </div>
+        <h2 id="searcher-heading" style="display: none; margin: 16px; text-align: center;">Searcher</h2>
+        <div style="margin: 16px; text-align: center" id="searcher-sliders"></div>
+        <h2 id="saved-heading" style="display: none; margin: 16px; text-align: center;">Saved Frequencies</h2>
+        <div style="margin: 16px; text-align: center" id="volume-sliders"></div>
     </body>
 </html>

@@ -1,4 +1,4 @@
-# Pbee's Tone Generator
+# Pbee Tone Generator
 
 This tone generator is used for replicating the experiment featured in this YouTube video by Steve Mould:
 

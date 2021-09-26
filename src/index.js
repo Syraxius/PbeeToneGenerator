@@ -1,6 +1,8 @@
-function ToneGenerator(audioContext, frequency) {
-    this.volume = 0
+var audioContext
+
+function ToneGenerator(audioContext, frequency, volume) {
     this.frequency = frequency
+    this.volume = volume || 0
     this.state = "stopped"
 
     this.start = () => {
@@ -41,54 +43,115 @@ function ToneGenerator(audioContext, frequency) {
         }
         this.oscillator.frequency.value = frequency;
     }
+
+    this.start()
 }
 
+const toneGenerators = {};
+
 const addVolumeSlider = (frequency) => {
+    if (frequency <= 0 || toneGenerators[frequency]) {
+        return;
+    }
+
+    toneGenerators[frequency] = new ToneGenerator(audioContext, frequency);
+
     let id = "volume" + frequency;
-    let parentDiv = document.getElementById("volumesliders");
+    let parentDiv = document.getElementById("volume-sliders");
+
+    document.getElementById("saved-heading").style.display = 'block';
 
     let volumeInput = document.createElement("input");
     volumeInput.setAttribute("id", id);
-    volumeInput.setAttribute("class", "volume-input");
+    volumeInput.setAttribute("class", "volume-input-vertical");
     volumeInput.setAttribute("type", "range");
     volumeInput.setAttribute("value", 0);
     volumeInput.setAttribute("min", 0);
     volumeInput.setAttribute("max", 1);
     volumeInput.setAttribute("step", 0.01);
     volumeInput.setAttribute("oninput", "toneGenerators[" + frequency + "].setVolume(this.value);");
+    volumeInput.setAttribute("orient", "vertical");
+    volumeInput.setAttribute("style", "-webkit-appearance: slider-vertical; writing-mode: bt-lr;")
 
     let volumeInputLabel = document.createElement("label");
     volumeInputLabel.setAttribute("for", id);
     volumeInputLabel.textContent = frequency + " Hz";
 
-    let childDiv = document.createElement("div");
-    childDiv.appendChild(volumeInput);
-    childDiv.appendChild(volumeInputLabel);
+    let volumeDiv = document.createElement("div");
+    volumeDiv.appendChild(volumeInput);
+    volumeDiv.appendChild(document.createElement("br"));
+    volumeDiv.appendChild(volumeInputLabel);
+    volumeDiv.setAttribute("style", "display: inline-block; width: 50px; padding: 16px; white-space: nowrap")
 
-    parentDiv.appendChild(childDiv);
+    parentDiv.appendChild(volumeDiv);
 };
 
-const frequencies = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000];
+const addDefaultToneGenerator = () => {
+    toneGenerators[-1] = new ToneGenerator(audioContext, 0, 1);
 
-const toneGenerators = {};
+    let frequencyId = "frequencyDefault";
+    let frequencyLabelId = "frequencyLabelDefault";
+    let volumeId = "volumeDefault";
+    let volumeLabelId = "volumeLabelDefault";
 
-const startAll = () => {
-    for (const frequency of frequencies) {
-        toneGenerators[frequency].start();
-    }
+    document.getElementById("searcher-heading").style.display = 'block';
+
+    let frequencyInput = document.createElement("input");
+    frequencyInput.setAttribute("id", frequencyId);
+    frequencyInput.setAttribute("class", "frequency-input");
+    frequencyInput.setAttribute("type", "range");
+    frequencyInput.setAttribute("value", 0);
+    frequencyInput.setAttribute("min", 0);
+    frequencyInput.setAttribute("max", 22000);
+    frequencyInput.setAttribute("step", 1);
+    frequencyInput.setAttribute("oninput", "toneGenerators[-1].setFrequency(this.value); document.getElementById(\"" + frequencyLabelId + "\").textContent = String(this.value).padStart(5, '0') + \" Hz\"");
+
+    let frequencyInputLabel = document.createElement("label");
+    frequencyInputLabel.setAttribute("id", frequencyLabelId);
+    frequencyInputLabel.setAttribute("for", frequencyId);
+    frequencyInputLabel.textContent = "00000 Hz";
+
+    let frequencyDiv = document.createElement("div");
+    frequencyDiv.appendChild(frequencyInput);
+    frequencyDiv.appendChild(frequencyInputLabel);
+
+    let volumeInput = document.createElement("input");
+    volumeInput.setAttribute("id", volumeId);
+    volumeInput.setAttribute("class", "volume-input");
+    volumeInput.setAttribute("type", "range");
+    volumeInput.setAttribute("value", 1);
+    volumeInput.setAttribute("min", 0);
+    volumeInput.setAttribute("max", 1);
+    volumeInput.setAttribute("step", 0.01);
+    volumeInput.setAttribute("oninput", "toneGenerators[-1].setVolume(this.value); document.getElementById(\"" + volumeLabelId + "\").textContent = Math.round(this.value * 100) + \"%\"");
+
+    let volumeInputLabel = document.createElement("label");
+    volumeInputLabel.setAttribute("id", volumeLabelId);
+    volumeInputLabel.setAttribute("for", volumeId);
+    volumeInputLabel.textContent = "100%";
+
+    let volumeDiv = document.createElement("div");
+    volumeDiv.appendChild(volumeInput);
+    volumeDiv.appendChild(volumeInputLabel);
+
+    let addButton = document.createElement("input");
+    addButton.setAttribute("type", "button");
+    addButton.setAttribute("value", "Add");
+    addButton.setAttribute("onclick", null);
+    addButton.setAttribute("style", "margin: 16px;");
+    addButton.setAttribute("onclick", "addVolumeSlider(document.getElementById(\"" + frequencyId + "\").value);");
+
+    let addDiv = document.createElement("div");
+    addDiv.appendChild(addButton);
+
+    let parentDiv = document.getElementById("searcher-sliders");
+    parentDiv.appendChild(frequencyDiv);
+    parentDiv.appendChild(volumeDiv);
+    parentDiv.appendChild(addDiv);
 };
 
-const stopAll = () => {
-    for (const frequency of frequencies) {
-        toneGenerators[frequency].stop();
-    }
+init = () => {
+    audioContext = new(window.AudioContext || window.webkitAudioContext || window.audioContext);
+    addDefaultToneGenerator();
+    document.getElementById("init-button").remove()
 };
-
-document.addEventListener("DOMContentLoaded", function(event) {
-    var audioContext = new(window.AudioContext || window.webkitAudioContext || window.audioContext);
-    for (const frequency of frequencies) {
-        toneGenerators[frequency] = new ToneGenerator(audioContext, frequency);
-        addVolumeSlider(frequency);
-    }
-});
-

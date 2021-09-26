@@ -1,3 +1,9 @@
-.volume-input {
-    width: 500px;
+.volume-input, .frequency-input {
+    width: 100%;
+}
+
+.volume-input-vertical {
+    height: 200px;
+    width: 10px;
+    margin: 8px;
 }
