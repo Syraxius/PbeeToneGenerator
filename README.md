@@ -6,7 +6,7 @@ https://www.youtube.com/watch?v=C-V1uXeyGmg
 
 ## Usage:
 
-1. Clone the repository
+1. Clone the repository or [download repository as zip](https://github.com/Syraxius/PbeeToneGenerator/archive/refs/heads/master.zip) and extract somewhere
 2. Double-click on `src/index.html`
 3. Enjoy!
 
